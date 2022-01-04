@@ -24,9 +24,11 @@ public class BlockChainListener {
 	
 	@Value("${server.port}") private String port;
 	
-	public void receiveBlockChainMessage(String parseMessage) {
+	public void receiveBlockChainMessage(String message) {
 
-		
+	String separator = "|";
+	String host = message.substring(0, message.indexOf(separator));
+	String parseMessage = message.substring(message.indexOf(separator) + separator.length());
         try {
         	ObjectMapper objectMapper = new ObjectMapper();
         	

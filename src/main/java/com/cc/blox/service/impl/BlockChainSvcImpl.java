@@ -244,7 +244,7 @@ public class BlockChainSvcImpl implements BlockChainSvc {
 			ObjectMapper objectMapper = new ObjectMapper();
 			String chainArrayStr = objectMapper.writeValueAsString(chain);
 			 
-			template.convertAndSend(CHANNEL_BLOCKCHAIN, chainArrayStr);
+			template.convertAndSend(CHANNEL_BLOCKCHAIN, InetAddress.getLocalHost().getHostName() + ":" + port + "|" + chainArrayStr);
 
 			
 		} catch (Exception e) {
