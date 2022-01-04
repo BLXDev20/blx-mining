@@ -68,6 +68,7 @@ public class TransactionPoolSvcImpl implements TransactionPoolSvc {
 			}
 			
 			if(count > 0) {
+				syncTransaction();
 				return;
 			}
 		}
