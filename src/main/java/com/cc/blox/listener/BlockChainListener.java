@@ -52,7 +52,7 @@ public class BlockChainListener {
         		
         		blockChainSvc.replaceChain(localBlockChain);
     			
-    			
+    			LOGGER.info("Status: CHAIN Received");
    
     			
         	}
