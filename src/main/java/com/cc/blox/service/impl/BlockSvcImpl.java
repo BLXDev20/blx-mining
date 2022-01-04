@@ -73,7 +73,13 @@ public class BlockSvcImpl implements BlockSvc {
 				return  null;
 			}
 			
-			
+			if(elapseTime > 0 && nonce > 0 && miningStatus) {
+				double elapseTimeInSec = (Double.valueOf(elapseTime)/1000);
+				double hashRate =  Double.valueOf(nonce)/elapseTimeInSec;
+				
+				LOGGER.info("New job received: Block " + hash);
+				LOGGER.info("Speed at " + hashRate + " hash/s"); 
+			}			
 			
 			
 			block = new Block(data, hash, lastHash, timeStamp, nonce, lastDifficulty, newHeight);
