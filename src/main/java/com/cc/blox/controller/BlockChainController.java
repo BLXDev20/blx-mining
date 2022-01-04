@@ -25,6 +25,17 @@ public class BlockChainController {
 		return blockChainSvc.getAddressDetails();
 	}
 	
+	@RequestMapping(value="/api/blocks", method=RequestMethod.GET)
+	public ArrayList<Block> getBlocks() {
+		return blockChainSvc.getBlocks();
+	}
+	
+	@RequestMapping(value="/api/transaction/pool", method=RequestMethod.GET)
+	public Map<String, Object> getTransactionPoolMap() {
+		return transactionPoolSvc.getTransactionPoolMap();
+	}
+	
+	
 	@RequestMapping(value="/api/blocks/page", method=RequestMethod.GET)
 	public List<Block> getPaginatedBlocks(
 			@RequestParam(value="page", defaultValue = "1") int page,
@@ -36,7 +47,4 @@ public class BlockChainController {
 		page = page -1;
 		return blockChainSvc.getPaginatedBlocks(page, itemsPerPage);
 	}
-	
-	
-	
 }
