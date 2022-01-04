@@ -140,7 +140,17 @@ html, body {
   align-items: center;
       background: #0D0F15;
 }
-
+#loading .content {
+  display: inline-block;
+  text-align: center;
+}
+#loading .content img {
+  display: block;
+  margin-bottom: 0.5em;
+}
+#loading .content .icon {
+  font-size: 3em;
+}
   
   hr {
   	    width: 100%;
