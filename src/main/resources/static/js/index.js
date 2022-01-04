@@ -186,6 +186,15 @@ var  vm = new Vue({
 		
 	});
 
+		let msec = 0; 
+	setInterval(() => { 
+	
+		if(this.mining.hash.substr(0, this.mining.hash.indexOf('|')) != "") {
+			this.mining.time.msec = ++msec % 60;
+		}
+		
+
+    }, 50);
 
 	 this.connect();
      this.getMyWallet();
