@@ -1,0 +1,470 @@
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+
+
+
+html, body {
+	padding: 0;
+	margin: 0; 
+}
+.bg {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -9999;
+
+    object-fit: cover;
+ }
+ 
+ .header { 
+    
+    background: #141414;
+    padding: 2em;
+    display: flex;
+    align-items: end;
+    justify-content: end;
+    color: #878787;
+  }
+  
+  .logo {
+      width: 75px;
+
+    }
+
+    .wallet-details{
+      color: #FFF;
+      text-align: left;
+    }
+ 
+ 
+ 
+  .mining-container {
+
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-item: center;
+   
+  }
+  
+  .mining-wrapper {
+        width: 35em;
+        background-color: #1D1D1D;
+        background-image: linear-gradient(#1D1D1D, #323232);
+        color: #FFF;
+        padding: 1.25em;
+        min-height: 200px;
+        height: auto;
+        border: 1px solid #D7C795;
+        outline: none;
+        box-shadow: none;
+    }  
+
+    .sys-msg {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+  
+    h2 {
+    text-align: left;
+    color: #FFF;
+  }
+  
+  .history-details {
+    color: #FFF;
+    text-align: left;
+    margin: 0.5em;
+    padding: 0.5em;
+    background-color: #1D1D1D;
+    background-image: linear-gradient(#1D1D1D, #323232);
+    border: 1px solid #D7C795;
+        width: 50em;
+  }
+  
+  .main-container {
+      display: flex; 
+    align-items: center; 
+    justify-content: center;
+    margin-top: 4em;
+  }
+  
+  .img-med {
+  	width: 125px;
+  }
+  
+  .margin-top {
+  	margin-top: 1em;
+  }
+  
+  .flex {
+  	display: flex;
+  }
+  
+  .small-icon {
+  	width: 75px;
+  }
+  
+#loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000; 
+  color: #FFF;
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  -webkit-justify-content: center;
+  -moz-justify-content: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  align-items: center;
+      background: #0D0F15;
+}
+
+  
+  hr {
+  	    width: 100%;
+  }
+  .text-left {
+  	text-align: left;
+  }
+  
+  
+    .text-center {
+  	text-align: center;
+  }
+  
+  
+  .small-text {
+  	font-size: 0.65em;
+  }
+  
+   .bold {
+  	font-weight: bold;
+  }
+  
+  .speedo {
+  	align-items: center;
+  	justify-content: center;
+  }
+  
+  .word-break {
+  	    word-break: break-word;
+  }
+  
+  .btn-main {
+  	background: #181f2d;
+    color: #FFF;
+    font-size: 0.65em;
+    padding: 0.75em 1.5em;
+    border-radius: 2px;
+    border: none;
+    box-shadow: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+    .btn-history {
+	  	background: #41454c;
+	    color: #FFF;
+	    font-size: 0.65em;
+	    padding: 0.75em 1.5em;
+	    border-radius: 2px;
+	    border: none;
+	    box-shadow: none;
+	    outline: none;
+	    display: flex;
+	    align-items: center;
+	    cursor: pointer;
+	    margin-left: 1em;
+	  }
+  
+  
+#btnSend {
+  	background-color: #de8413; 
+  	background-image: linear-gradient(#de8413, #d8962c);
+    color: #FFF; 
+    padding: 0.75em 1.5em;
+    border-radius: 2px;
+    border: none;
+    box-shadow: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  
+    .left {
+     	background-color: #de8413; 
+  		background-image: linear-gradient(#de8413, #d8962c);
+  		display: flex;
+  		color: #FFF;
+  		padding: 1.5em;
+  		border-top-left-radius: 6px;
+    	border-bottom-left-radius: 6px;
+  		flex-direction: column;
+  		min-height: 15em;
+  		align-items: start;
+    	justify-content: center;
+    	max-width: 20em;
+    	min-width: 20em;
+  		
+ 	 }
+ 	 .left-content {
+ 	 	display: flex;
+ 	 	flex-direction: column;
+ 	     justify-content: center;
+ 	 }
+ 	 
+ 	   .right {
+     	background-color: #de8413; 
+  		background-image: linear-gradient(#de8413, #d8962c);
+  		min-height: 15em;
+  		align-items: center;
+    	justify-content: center;
+    	max-width: 20em;
+    	min-width: 20em;
+    	padding: 1.5em;
+    	border-top-right-radius: 6px;
+    	border-bottom-right-radius: 6px;
+ 	 }
+  	
+  	 .right-content {
+ 	 	color: #FFF;
+ 	 	display: flex;
+ 	 	flex-direction: column;
+ 	     justify-content: center;
+ 	 }
+ 	 
+ 	 
+ .center {
+  	position: relative;
+  	width: 27em;
+  	height: 24em;
+  	padding: 1.5em;
+  	box-shadow: 0px 0px 20px 5px rgba(0,0,0,0.75);
+	-webkit-box-shadow: 0px 0px 20px 5px rgba(0,0,0,0.75);
+	-moz-box-shadow: 0px 0px 20px 5px rgba(0,0,0,0.75);
+  }
+  
+  .text-white {
+  	color: #FFF;
+  }
+  
+  label {
+  	font-weight: bold;
+  	
+  }
+  
+  .error {
+  	color: red;
+  }
+  
+  .alert {
+  	background: #181f2d;
+  	padding: 0.5em;
+  	margin-bottom: 1em;
+  	color: #FFF;
+  }
+  
+  .back-send-logo {
+  	width: 25px;
+  }
+  
+    .back-history-logo {
+	  	width: 25px;
+	  	margin: 0 1em;
+  }
+  
+  
+  
+  .back-send{
+  	position: absolute;
+    top: 18px;
+    left: 24px;
+   }
+  
+  .back {
+  	margin-left: 1em;
+  }
+  
+  .form-control {
+  	display: block;
+    width: 95%;
+    padding: 0.5em;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  }
+  
+  .send-container {
+	  	
+	    width: 25em;
+	    padding: 1.5em;
+	    border-radius: 6px;
+	    flex-direction: column;
+	    position: relative;
+	    background: #FFF;
+	    padding-top: 5em;
+	    color: #000;
+  }
+  
+  
+   .history-container {  
+	    padding: 1.5em;
+	    border-radius: 6px;
+	    flex-direction: column;
+	    position: relative;
+	    background: #FFF;
+	    padding-top: 5em;
+	    color: #000;
+	    background-color: #de8413;
+	    background-image: linear-gradient(#de8413, #d8962c);
+	    width: 100%;
+   	 	margin: 0 2em;
+  }
+  
+  .history-header { 
+	top: 0;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    color: #FFF;
+    display: flex;
+    justify-content: left;
+    align-items: center;;
+  }
+  
+  .form-container {
+      display: flex;
+    flex-direction: column;
+    align-items: start;
+    margin-top: 1em;
+  }
+  
+  .send-container-header {
+  	    background-color: #181818;
+	    top: 0;
+	    position: absolute;
+	    width: 100%;
+	    left: 0;
+	    border-top-left-radius: 4px;
+	    border-top-right-radius: 4px;
+	    color: #DD8318;
+  }
+  
+  .mining-label {
+ 	     background-color: #de8413;
+	    background-image: linear-gradient(#de8413, #d8962c);
+	    color: #FFF;
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	    padding: 1em;
+	    border-radius: 6px;
+  }
+ 
+	
+	.colon {
+		color: #FFF;
+	    font-size: 3em;
+	}
+	.timer {
+		display: flex;
+	    justify-content: space-between;
+	    align-items: center;
+	    
+	}
+	.timer > div {
+		border: 1px solid #fda83b;
+	    color: #FFF;
+	    padding: 0.75em; 
+	    text-align: center;
+	    font-size: 1.75em;
+	    font-weight: bold;
+	    border-radius: 6px;
+	}
+  
+  .hash {
+  	white-space: nowrap !important;
+    width: 20em;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  
+  .center-box-bg {
+	position: absolute;
+  	width: 100%;
+    height: 100%; 
+    top: 0;
+    left: 0;
+  	z-index: -9999;
+
+    object-fit: cover;
+  }
+  
+  
+  table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  color: #333;
+}
+
+.th-orange {
+	color: #de8413;
+}
+
+td, th {
+ 
+  text-align: left;
+  padding: 1em;
+  font-size: 0.75em;
+}
+
+th {
+	
+	border-bottom: 1px solid #000;
+}
+
+tr:nth-child(even) { 
+}
+
+.history-content {
+	background: #FFF;
+    padding: 2em;
+    border-radius: 6px;
+}
+  

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>BLOX</title>
+	<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+	<div id="app">
+		<img src="img/dash_bg.png" class="bg">
+		
+	
+		    
+		<div class="header">
+	      	Address: {{ wallet.publicKey }}
+	    </div>
+	    
+	    <div class="main-container" v-if="state == 'init'">
+	    
+	    	<div class="left">
+	    		<div class="flex">
+	    			<div> <img src="img/blx_mined.png" class="small-icon"> </div>	
+	    		
+		    		<div class="left-content">
+		    			<div class="text-left small-text"> <span> BLOX MINED </span> </div>
+		    			<div class="text-left"> <span class="bold"> BLX  </span> <span> {{ formatBalance(wallet.miningBalance, 8) }} </span>  </div>  
+		    		</div>	
+	    		</div>
+	    		
+	    		<hr>
+	    		<div class="flex">
+		    		<div> <img src="img/balance.gif" class="small-icon"> </div>	
+		    		
+		    		<div class="left-content">
+		    			<div class="text-left small-text"> <span> WALLET BALANCE </span> </div>
+		    			<div class="text-left"> <span class="bold"> BLX  </span> <span> {{ formatBalance(wallet.balance, 8) }} </span>  </div> 
+		    			
+		    			<div class="text-left flex">
+		    				
+		    				<button class="btn-history" type="button" v-on:click="initHistory"> 
+		    					<img src="img/transaction.png" style="width: 10px"  />
+		    					<span>History</span>	
+		    				</button>
+		    			</div>
+		    		</div>	
+	    		</div>
+	    		
+	    		
+	    	</div>
+	    	
+	    	<div class="center">
+	    		<img src="img/center_box.png" class="center-box-bg">
+	    		
+	    		<div> <img src="img/b2.gif" class="small-icon"> </div>	
+	    		
+	    		<div class="flex margin-top">
+	    			<div> <img src="img/mining.gif" class="small-icon"> </div>	
+	    		
+		    		<div class="right-content">
+		    			<div class="text-left small-text bold"> <span> MINING </span> </div>
+		    			<div class="text-left"> <span class="bold"> BLX  </span> <span> {{ formatBalance(wallet.balance, 8) }} </span>  </div> 
+		    		</div>	
+	    		</div>
+	    		
+	    		
+	    		<div class="flex ">
+	    			<div class="timer-wrapper">
+                     <h4 class="text-left text-white" >Mining Timer</h4>
+
+                     <div class="timer">
+                      <div class="day">
+                           {{ pad(mining.time.day) }}
+                        </div>
+                        <span class="colon">:</span>
+                        <div class="hour">
+                           {{ pad(mining.time.hour) }}
+                        </div>
+                        <span class="colon">:</span>
+                        <div class="min">
+                           {{ pad(mining.time.min) }}
+                        </div>
+                        <span class="colon">:</span>
+                        <div class="sec">
+                           {{ pad(mining.time.sec) }}
+                        </div>
+
+                        <span class="colon">:</span>
+                        <div class="msec">
+                           {{ pad(mining.time.msec) }}
+                        </div>  
+                     </div>
+
+                     
+                  </div>
+	    		</div>
+	    		
+	    		<div class="flex margin-top mining-label">
+	    		
+	    			Currently Mining
+	    		</div>
+	    		
+	    	</div>
+	    	
+	    	<div class="right">
+	    	
+	    		<div class="flex speedo">
+	    			<div> <img src="img/speedo-online.gif" class="img-med"> </div>	
+	    		</div>
+	    		
+	    		
+	    		<div class="flex margin-top">
+	    			<div> <img src="img/hash.gif" class="small-icon"> </div>	
+	    		
+		    		<div class="right-content">
+		    			<div class="text-left  "> <span class="bold"> HASH RESULT </span> </div>
+		    			<div class="text-left word-break">  <span>  {{ mining.hash.substr(0, mining.hash.indexOf('|')) == "" ? "Waiting for the next transaction" : mining.hash.substr(0, mining.hash.indexOf('|'))   }} </span>  </div>  
+		    		</div>	
+	    		</div>
+	    	</div>
+    	</div>
+
+	     
+	     <div class="main-container" v-if="state == 'history'">
+	     	
+	     	<div class="flex history-container">
+	     		<div class="history-header">
+	     			<div   v-on:click="state = 'init'">
+	     				<a href="#"> <img src="img/left.png" class="back-history-logo" /> </a>
+	     			</div>
+	     			<h4> TRANSACTION HISTORY </h4>
+	     		</div>
+	     		
+	     		<div class="history-content">
+	     			<table>
+						  <tr>
+						    <th>TIMESTAMP</th>
+						    <th>HASH</th>
+						    <th>INPUT</th>
+						    <th>OUTPUT</th>
+						    <th>AMOUNT</th> 
+						    <th>STATUS</th>
+						  </tr>
+						  <tr v-for="h in wallet.history" :key="h.hash">
+						    <td >{{ formatDate(h.input.timeStamp) }}</td>
+						    <td class="th-orange"> <div class="hash"> {{ h.hash }} </div> </td>
+						    <td class="th-orange"> {{ h.senderWallet != null ? h.senderWallet.publicKey : "Newly generated BLX" }}  </td>
+						    <td class="th-orange">{{ h.recipient }}</td>
+						    <td> BLX {{ formatBalance(h.amount, 8) }} </td> 
+						    <td>SUCCESS</td>
+						  </tr>
+						
+						</table>
+	     	
+	     		</div>
+	     	</div>
+	     
+	     </div>
+	</div>
+	
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js" integrity="sha512-u9akINsQsAkG9xjc1cnGF4zw5TFDwkxuc9vUp5dltDWYCSmyd0meygbvgXrlc/z7/o4a19Fb5V0OUE58J7dcyw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src = "https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
+      <script src = "https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+	<script src="js/index.js" ></script>
+</body>
+</html>

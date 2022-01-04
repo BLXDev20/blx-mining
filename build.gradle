@@ -1,0 +1,50 @@
+plugins {
+	id 'org.springframework.boot' version '2.5.0'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'com.cc'
+version = '2.0.1'
+sourceCompatibility = '1.8'
+jar {
+	baseName = 'blox-net'
+    manifest {
+        attributes 'Implementation-Title': 'blox-net',
+                   'Implementation-Version': version
+    }
+}
+
+
+sourceSets.main.resources { srcDir file('src/main/java') exclude '*/.java' }
+
+bootJar {
+    launchScript()
+}
+repositories {
+	mavenCentral()
+}
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web' 
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis' 
+	implementation 'org.springframework.boot:spring-boot-starter-websocket' 
+	implementation 'org.springframework.boot:spring-boot-devtools'
+	implementation 'commons-httpclient:commons-httpclient:3.1'
+	implementation 'org.apache.commons:commons-lang3:3.7'
+	implementation 'org.bouncycastle:bcprov-jdk15on:1.59'
+	implementation 'io.lettuce:lettuce-core:6.1.5.RELEASE'
+	implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.13.0'
+	implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.0'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
+
+test {
+	useJUnitPlatform()
+}
