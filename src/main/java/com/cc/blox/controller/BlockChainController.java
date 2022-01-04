@@ -25,7 +25,17 @@ public class BlockChainController {
 		return blockChainSvc.getAddressDetails();
 	}
 	
-	
+	@RequestMapping(value="/api/blocks/page", method=RequestMethod.GET)
+	public List<Block> getPaginatedBlocks(
+			@RequestParam(value="page", defaultValue = "1") int page,
+			@RequestParam(value="itemsPerPage", defaultValue = "10") int itemsPerPage) {
+		
+		if(page <0) {
+			page = 1;
+		}
+		page = page -1;
+		return blockChainSvc.getPaginatedBlocks(page, itemsPerPage);
+	}
 	
 	
 	

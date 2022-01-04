@@ -18,4 +18,6 @@ public interface BlockChainSvc {
 	public boolean addBlock(Map<String, Object>  data);
 
 	public void syncChains();
+
+	public List<Block> getPaginatedBlocks(int page, int itemsPerPage);
 }

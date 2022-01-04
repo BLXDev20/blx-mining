@@ -255,6 +255,24 @@ public class BlockChainSvcImpl implements BlockChainSvc {
 		
 	}
 
-	
+	@Override
+	public List<Block> getPaginatedBlocks(int page, int itemsPerPage) {
+		List<Block> localChain = blockChain.chain.stream()
+				  .sorted(Comparator.comparing(Block::getHeight).reversed())
+				  .collect(Collectors.toList());
+		 
+		 
+		int totalItems = localChain.size();
+		int fromIndex = page*itemsPerPage;
+		int toIndex = fromIndex+itemsPerPage;
+	    if(fromIndex <= totalItems) {
+	        if(toIndex > totalItems){
+	            toIndex = totalItems;
+	        }
+	        return localChain.subList(fromIndex, toIndex);
+	    }else {
+	        return Collections.emptyList();
+	    }
+	}
 
 }
