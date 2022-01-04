@@ -20,8 +20,11 @@ public class TransactionPoolListener {
 
 	@Value("${server.port}") private String port;
 	
-	public void receiveTxnMessage(String parseMessage) {
-
+	public void receiveTxnMessage(String message) {
+	
+	String separator = "|";
+	String host = message.substring(0, message.indexOf(separator));
+	String parseMessage = message.substring(message.indexOf(separator) + separator.length());
 
         try {
         	ObjectMapper objectMapper = new ObjectMapper();

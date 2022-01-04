@@ -88,8 +88,9 @@ public class TransactionSvcImpl implements TransactionSvc {
 			
 			
 			String txnStr = objectMapper.writeValueAsString(txn); 
-			
-			redisTemplate.convertAndSend(CHANNEL_TRANSACTION, txnStr);
+			String msg = InetAddress.getLocalHost().getHostName() + ":" + port + "|" + txnStr;
+	
+			redisTemplate.convertAndSend(CHANNEL_TRANSACTION, msg);
 			 
 			
 			
