@@ -72,7 +72,7 @@ public class BlockChainSvcImpl implements BlockChainSvc {
 			return;
 		}
 		
-		LOGGER.info("Synchronization: Blockchain TestNet");
+		LOGGER.info("Synchronization: Blockchain MainNet");
 		
 		blockChain.chain = incomingChain;
 		transactionPoolSvc.clearTransactionMap();
