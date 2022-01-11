@@ -2,11 +2,9 @@ package com.cc.blox.service;
  
 import java.util.Map;
 
-import com.cc.blox.domain.Transaction;
-
 public interface TransactionPoolSvc {
 
-	public void  setTransaction(Transaction txn);
+	public void  setTransaction(Map<String, Object> txn);
 	
 	public Map<String, Object> getTransactionPoolMap();
 

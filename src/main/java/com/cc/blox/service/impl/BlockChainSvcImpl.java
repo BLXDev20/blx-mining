@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -18,16 +17,19 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.redisson.api.RTopic;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.cc.blox.domain.Block;
 import com.cc.blox.domain.BlockChain;
+import com.cc.blox.listener.BlockChainListener;
+import com.cc.blox.listener.TransactionPoolListener;
 import com.cc.blox.service.BlockChainSvc;
 import com.cc.blox.service.BlockSvc;
 import com.cc.blox.service.TransactionPoolSvc;
@@ -35,6 +37,10 @@ import com.cc.blox.service.TransactionSvc;
 import com.cc.blox.utils.CryptoUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import me.tongfei.progressbar.ProgressBar;
+import me.tongfei.progressbar.ProgressBarBuilder;
+import me.tongfei.progressbar.ProgressBarStyle;
  
  
 
@@ -49,6 +55,8 @@ public class BlockChainSvcImpl implements BlockChainSvc {
 	@Autowired private TransactionPoolSvc transactionPoolSvc; 
 	@Autowired private BlockSvc blockSvc; 
 	@Autowired private ApplicationContext ctx;
+	@Autowired private BlockChainListener blockChainListener;
+	@Autowired private TransactionPoolListener transactionPoolListener;
 	@Autowired private TransactionSvc transactionSvc;
 	
 	BlockChain blockChain = new BlockChain();
@@ -81,36 +89,6 @@ public class BlockChainSvcImpl implements BlockChainSvc {
 		
 
 	}
-
-	
-	private List<Block> getBlocks(long numberOfBlock) {
-		
-		List<Block> chain = null;
-		GetMethod getMethod = new GetMethod(nodeRootUrl + "/api/blocks/page?page=1&itemsPerPage=" + numberOfBlock);
-		
-		try {
-			httpClient.executeMethod(getMethod);
-			
-			InputStream responseBody = getMethod.getResponseBodyAsStream();
-			InputStreamReader isReader = new InputStreamReader(responseBody);
-			BufferedReader reader = new BufferedReader(isReader);
-			StringBuffer sb = new StringBuffer();	
-			String str;
-			while((str = reader.readLine())!= null){
-				sb.append(str);
-			}
-			
-			ObjectMapper objectMapper = new ObjectMapper();
-			chain = Arrays.asList(objectMapper.readValue(sb.toString(), Block[].class));
-			
-			
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-		} 
-		
-		return chain;
-	}
 	
 	private boolean isValidChain(ArrayList<Block> chain) {
 		
@@ -123,7 +101,7 @@ public class BlockChainSvcImpl implements BlockChainSvc {
 				return false;
 			}
 
-			String validatedHash =  CryptoUtils.toSha256(block.lastHash + block.timeStamp + block.nonce + block.difficulty + block.height);
+			String validatedHash =  CryptoUtils.toSha256(CryptoUtils.toSha256(block.data.toString().replaceAll("\\s+","")) + block.lastHash + block.timeStamp + block.nonce + block.difficulty + block.height);
 			 
 			if(!block.hash.equals(validatedHash)) { 
 				
@@ -142,6 +120,12 @@ public class BlockChainSvcImpl implements BlockChainSvc {
 		return blockChain.chain;
 	}
 	
+	@Override
+	public void syncNode() {
+		
+	}
+	
+	
 	@EventListener(ApplicationReadyEvent.class)
 	@Override
 	public void syncChains() {
@@ -153,28 +137,33 @@ public class BlockChainSvcImpl implements BlockChainSvc {
 			
 			InputStream responseBody = getMethod.getResponseBodyAsStream();
 			  
-			LOGGER.info("Synchronization: BLX");
-			
-			InputStreamReader isReader = new InputStreamReader(responseBody);
+			ProgressBarBuilder pbb = new ProgressBarBuilder()
+				    .setTaskName("Synchronization BLX")
+				    .setUnit("MiB", 1048576)
+				    .setStyle(ProgressBarStyle.COLORFUL_UNICODE_BLOCK)
+				    .showSpeed();
+			InputStreamReader isReader = new InputStreamReader(ProgressBar.wrap(responseBody, pbb));
 			BufferedReader reader = new BufferedReader(isReader);
-			StringBuffer sb = new StringBuffer();
-			String str;
+			String str; 
+			
+			ArrayList<Block> chain = new ArrayList<>();
+			
 			while((str = reader.readLine())!= null){
-				sb.append(str);
-			}
-			
-			
-			ObjectMapper objectMapper = new ObjectMapper();
-			ArrayList<Block> chain = new ArrayList<>(Arrays.asList(objectMapper.readValue(sb.toString(), Block[].class)));	   				
+				ObjectMapper objectMapper = new ObjectMapper();
+				Block block = objectMapper.readValue(str, new TypeReference<Block>(){});
+				chain.add(block);
+			}   	
 			 
 			replaceChain(chain); 
 			
 			transactionPoolSvc.syncTransaction();
 			
 			String localHost = InetAddress.getLocalHost().getHostName() + ":" + port;
-        	LOGGER.info("Synchronization view: http://" + localHost + "/ or http://127.0.0.1:" + port);
+        	LOGGER.info("Synchronization Complete: http://" + localHost + "/ or http://127.0.0.1:" + port);
 			 
-        	
+        	blockChainListener.setReady(true);
+        	transactionPoolListener.setReady(true);
+        	transactionSvc.setReady(true);
         	
 		} catch (IOException e1) { 
 			e1.printStackTrace();
@@ -238,13 +227,12 @@ public class BlockChainSvcImpl implements BlockChainSvc {
 	private void broadcastChain(Block chain) {
 		 
 		try { 
-			
-			StringRedisTemplate template = ctx.getBean(StringRedisTemplate.class); 
-			
 			ObjectMapper objectMapper = new ObjectMapper();
 			String chainArrayStr = objectMapper.writeValueAsString(chain);
-			 
-			template.convertAndSend(CHANNEL_BLOCKCHAIN, InetAddress.getLocalHost().getHostName() + ":" + port + "|" + chainArrayStr);
+
+			RedissonClient redisson = (RedissonClient) ctx.getBean("redisson"); 
+			RTopic topic = redisson.getTopic(CHANNEL_BLOCKCHAIN);
+			topic.publish(InetAddress.getLocalHost().getHostName() + ":" + port + "|" + chainArrayStr);
 
 			
 		} catch (Exception e) {

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.cc'
-version = '2.2.0'
+version = '2.2.1'
 sourceCompatibility = '1.8'
 jar {
 	baseName = 'blox-net'
@@ -37,7 +37,8 @@ dependencies {
 	implementation 'commons-httpclient:commons-httpclient:3.1'
 	implementation 'org.apache.commons:commons-lang3:3.7'
 	implementation 'org.bouncycastle:bcprov-jdk15on:1.59'
-	implementation 'io.lettuce:lettuce-core:6.1.5.RELEASE'
+	implementation 'org.redisson:redisson:3.16.8'
+	implementation 'me.tongfei:progressbar:0.9.3'
 	implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.16.0'
 	implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.16.0'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {

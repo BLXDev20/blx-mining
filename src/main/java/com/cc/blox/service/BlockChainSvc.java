@@ -20,4 +20,6 @@ public interface BlockChainSvc {
 	public void syncChains();
 
 	public List<Block> getPaginatedBlocks(int page, int itemsPerPage);
+
+	public void syncNode();
 }

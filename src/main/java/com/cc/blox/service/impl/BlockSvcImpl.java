@@ -6,15 +6,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.cc.blox.domain.Block;
 import com.cc.blox.service.BlockSvc;
 import com.cc.blox.utils.CryptoUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
  
 
 @Service
@@ -22,10 +19,9 @@ public class BlockSvcImpl implements BlockSvc {
 	private static final Logger LOGGER = LogManager.getLogger(BlockSvcImpl.class);
 	public final static String CHANNEL_BLOCK = "BLOCK";
 	public final static String ZERO = "0"; 
-	public final static int difficulty = 23;
+	public final static int difficulty = 22;
 	@Autowired private SimpMessagingTemplate template;
 	long startTime = System.currentTimeMillis();
-	@Autowired private ApplicationContext ctx;  
 	@Value("${wallet.address}") private String walletAddress;
 	
 	boolean miningStatus = true;
@@ -56,7 +52,7 @@ public class BlockSvcImpl implements BlockSvc {
 				nonce++;
 				timeStamp = System.currentTimeMillis(); 
 				
-				hash = CryptoUtils.toSha256(lastHash + timeStamp + nonce + lastDifficulty + newHeight);
+				hash = CryptoUtils.toSha256(CryptoUtils.toSha256(data.toString().replaceAll("\\s+","")) + lastHash + timeStamp + nonce + lastDifficulty + newHeight);
 				repeatZero = new String(new char[lastDifficulty]).replace("\u0000" , ZERO);
 				
 				template.convertAndSend("/topic/mine", hash + "|" + (timeStamp - startTime));

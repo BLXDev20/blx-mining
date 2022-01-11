@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,12 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.cc.blox.domain.Block;
-import com.cc.blox.domain.Transaction;
-import com.cc.blox.service.BlockChainSvc;
-import com.cc.blox.service.BlockSvc;
 import com.cc.blox.service.TransactionPoolSvc;
-import com.cc.blox.service.TransactionSvc;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
  
@@ -41,9 +35,9 @@ public class TransactionPoolSvcImpl implements TransactionPoolSvc {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setTransaction(Transaction txn) {
+	public void setTransaction(Map<String, Object> txn) {
 		boolean isRewardTxn = false;
-		if(txn.getSenderWallet() == null) {
+		if(txn.get("senderWallet") == null && txn.get("symbol").toString().equalsIgnoreCase("blx") ) {
 			isRewardTxn = true;
 		}
 		
@@ -51,18 +45,10 @@ public class TransactionPoolSvcImpl implements TransactionPoolSvc {
 			int count = 0;
 			for (Map.Entry<String, Object> entry : this.transactionMap.entrySet()) {
 				
-				if(entry.getValue() instanceof Transaction) {
-					Transaction localTxn = (Transaction) entry.getValue();
-					
-					if(localTxn.getSenderWallet() == null) {
-						count++;
-					} 
-				} else {
-					Map<String, Object> localTxn = (Map<String, Object>) entry.getValue();
-					
-					if(localTxn.get("senderWallet") == null) {
-						count++;
-					}
+				Map<String, Object> localTxn = (Map<String, Object>) entry.getValue();
+				
+				if(localTxn.get("senderWallet") == null) {
+					count++;
 				}
 				
 			}
@@ -73,7 +59,7 @@ public class TransactionPoolSvcImpl implements TransactionPoolSvc {
 			}
 		}
 		
-		this.transactionMap.put(txn.getHash(),txn);
+		this.transactionMap.put(txn.get("hash").toString(),txn);
 	}
 	
 	@Override

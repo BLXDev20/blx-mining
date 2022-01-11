@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.cc.blox.domain.Block;
 import com.cc.blox.service.BlockChainSvc;
-import com.cc.blox.service.BlockSvc;
-import com.cc.blox.service.TransactionSvc;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper; 
 
@@ -24,12 +22,24 @@ public class BlockChainListener {
 	
 	@Value("${server.port}") private String port;
 	
+	boolean isReady = false;
+	
+	public void setReady(boolean ready) {
+		this.isReady =  ready; 
+	}
+	
 	public void receiveBlockChainMessage(String message) {
 
-	String separator = "|";
-	String host = message.substring(0, message.indexOf(separator));
-	String parseMessage = message.substring(message.indexOf(separator) + separator.length());
+		String separator = "|";
+		String host = message.substring(0, message.indexOf(separator));
+		String parseMessage = message.substring(message.indexOf(separator) + separator.length());
         try {
+        	//LOGGER.info(this.isReady);
+        	if(!this.isReady ) {
+        		
+        		return;
+        	}
+        	
         	ObjectMapper objectMapper = new ObjectMapper();
         	
         	String localHost = InetAddress.getLocalHost().getHostName() + ":" + port;
@@ -39,20 +49,18 @@ public class BlockChainListener {
         		ArrayList<Block> localBlockChain =  blockChainSvc.getBlocks();
             	Block block = objectMapper.readValue(parseMessage, new TypeReference<Block>(){});
             	
-            	if( (localBlockChain.get(localBlockChain.size() - 1).height + 1) != block.height ) {
+            	if(!localBlockChain.get(localBlockChain.size()-1).hash.equals(block.lastHash)) {
             	
-            		blockChainSvc.syncChains();
+            		blockChainSvc.syncNode();
+            	} else {
+            		localBlockChain.add(block);
+                	
+                	
+            		
+            		blockChainSvc.replaceChain(localBlockChain);
+        			
+        			LOGGER.info("Status: CHAIN Received");
             	}
-            	
-            	
-            	
-            	localBlockChain.add(block);
-            	
-            	
-        		
-        		blockChainSvc.replaceChain(localBlockChain);
-    			
-    			LOGGER.info("Status: CHAIN Received");
    
     			
         	}

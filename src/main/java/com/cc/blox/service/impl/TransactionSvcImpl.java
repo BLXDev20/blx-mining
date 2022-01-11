@@ -4,17 +4,14 @@ import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.redisson.api.RTopic;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.context.ApplicationContext; 
 import org.springframework.stereotype.Service;
 
-import com.cc.blox.domain.Transaction;
 import com.cc.blox.service.BlockChainSvc;
 import com.cc.blox.service.SvcException;
 import com.cc.blox.service.TransactionPoolSvc;
@@ -24,21 +21,34 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class TransactionSvcImpl implements TransactionSvc {
-	private static final Logger LOGGER = LogManager.getLogger(TransactionSvc.class);
 	@Autowired private ApplicationContext ctx;  
 	@Autowired TransactionPoolSvc transactionPoolSvc;
 	@Autowired BlockChainSvc blockChainSvc;
 	private final static double BLXREWARD = 200;
 	
-	Transaction transaction = new Transaction();
+	Map<String, Object> transaction = new HashMap<String, Object>();
 	
 	public final static String CHANNEL_TRANSACTION = "TRANSACTION";
 	@Value("${server.port}") private String port;
 	@Value("${wallet.address}") private String walletAddress;
+	private final static String SYMBOL = "BLX";
 	
-
+	boolean isReady = false;
+	
+	@Override
+	public void setReady(boolean ready) {
+		this.isReady =  ready; 
+	}
+	
+	@Override
 	public void mineBlocks(String args) {
-		LOGGER.info(args);
+		//System.out.println(args);
+		if(!this.isReady ) {
+    		
+    		return;
+    	}
+		
+		
 		if(args.equals("MINE")) {
 			Map<String, Object> transactionMap = transactionPoolSvc.getTransactionPoolMap();
 			
@@ -60,37 +70,40 @@ public class TransactionSvcImpl implements TransactionSvc {
 	}
 	
 	@Override
-	public Transaction processTransaction(Map<String, Object> payload) {
+	public Map<String, Object> processTransaction(Map<String, Object> payload) {
 		String address = (String)payload.get("address"); 
 		String amount = (String)payload.get("amount");  
+		String symbol = (String)payload.get("symbol");
 		
 		if(Double.parseDouble(amount) <= 0) {
 			throw new SvcException("Invalid amount", "FLD.REQ");
 		}
 		
-		Transaction txn = createTransaction(address, Double.valueOf(amount));
-		
-		
+		Map<String, Object> txn = createTransaction(address, Double.valueOf(amount));
+		if(symbol == null) {
+			symbol = SYMBOL;
+		}
+		txn.put("symbol",symbol);
 		transactionPoolSvc.setTransaction(txn);
 		
 		broadcastTransaction(txn);
 		return txn;
 	}
 	
-	private void broadcastTransaction(Transaction txn) {
+	private void broadcastTransaction(Map<String, Object> txn) {
 		
 		try {
-			
-			
-			StringRedisTemplate redisTemplate = ctx.getBean(StringRedisTemplate.class); 
 			
 			ObjectMapper objectMapper = new ObjectMapper();
 			
 			
 			String txnStr = objectMapper.writeValueAsString(txn); 
 			String msg = InetAddress.getLocalHost().getHostName() + ":" + port + "|" + txnStr;
-	
-			redisTemplate.convertAndSend(CHANNEL_TRANSACTION, msg);
+			
+
+			RedissonClient redisson = (RedissonClient) ctx.getBean("redisson"); 
+			RTopic topic = redisson.getTopic(CHANNEL_TRANSACTION);
+			topic.publish(msg);
 			 
 			
 			
@@ -101,21 +114,20 @@ public class TransactionSvcImpl implements TransactionSvc {
 		
 	}
 	
-	private Transaction createTransaction(String address, double amount) {
+	private Map<String, Object> createTransaction(String address, double amount) {
 		
-		Transaction txn = new Transaction();
+		Map<String, Object> txn = new HashMap<String, Object>();
+		txn.put("senderWallet",null);
+		txn.put("hash",CryptoUtils.toSha256(UUID.randomUUID().toString()));
 		
-		txn.setSenderWallet(null);
-		txn.setHash(CryptoUtils.toSha256(UUID.randomUUID().toString()));
-		
-		txn.setRecipient(address);
-		txn.setAmount(amount);
+		txn.put("recipient",address);
+		txn.put("amount",amount);
 		
 		Map<String, Object> outputMap = new HashMap<String, Object>();
 		outputMap.put(address, amount); 
-		txn.setOutputMap(outputMap);
+		txn.put("outputMap",outputMap);
 		
-		txn.setInput(createInput(txn.getOutputMap(), address));
+		txn.put("input",createInput(outputMap, address));
 		
 		return txn;
 	}
