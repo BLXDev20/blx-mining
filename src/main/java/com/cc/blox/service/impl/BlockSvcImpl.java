@@ -22,7 +22,7 @@ public class BlockSvcImpl implements BlockSvc {
 	private static final Logger LOGGER = LogManager.getLogger(BlockSvcImpl.class);
 	public final static String CHANNEL_BLOCK = "BLOCK";
 	public final static String ZERO = "0"; 
-	public final static int difficulty = 23;
+	public final static int difficulty = 22;
 	@Autowired private SimpMessagingTemplate template;
 	long startTime = System.currentTimeMillis();
 	@Autowired private ApplicationContext ctx;  

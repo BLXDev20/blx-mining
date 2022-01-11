@@ -41,7 +41,7 @@ public class RedisConfig {
 
 	        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
 	                .commandTimeout(Duration.ofMinutes(5)).clientOptions(clientOptions).build();
-	        RedisStandaloneConfiguration serverConfig = new RedisStandaloneConfiguration("18.142.102.115", 6379);
+	        RedisStandaloneConfiguration serverConfig = new RedisStandaloneConfiguration("13.213.83.217", 6379);
 
 	        final LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(serverConfig, clientConfig);
 	        lettuceConnectionFactory.setValidateConnection(true);

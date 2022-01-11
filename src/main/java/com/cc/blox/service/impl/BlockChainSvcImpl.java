@@ -163,7 +163,7 @@ public class BlockChainSvcImpl implements BlockChainSvc {
 				sb.append(str);
 			}
 			
-			
+
 			ObjectMapper objectMapper = new ObjectMapper();
 			ArrayList<Block> chain = new ArrayList<>(Arrays.asList(objectMapper.readValue(sb.toString(), Block[].class)));	   				
 			 

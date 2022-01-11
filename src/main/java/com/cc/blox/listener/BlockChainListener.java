@@ -39,20 +39,18 @@ public class BlockChainListener {
         		ArrayList<Block> localBlockChain =  blockChainSvc.getBlocks();
             	Block block = objectMapper.readValue(parseMessage, new TypeReference<Block>(){});
             	
-            	if( (localBlockChain.get(localBlockChain.size() - 1).height + 1) != block.height ) {
+            	if(!localBlockChain.get(localBlockChain.size()-1).hash.equals(block.lastHash)) {
             	
             		blockChainSvc.syncChains();
+            	} else {
+            		localBlockChain.add(block);
+                	
+                	
+            		
+            		blockChainSvc.replaceChain(localBlockChain);
+        			
+        			LOGGER.info("Status: CHAIN Received");
             	}
-            	
-            	
-            	
-            	localBlockChain.add(block);
-            	
-            	
-        		
-        		blockChainSvc.replaceChain(localBlockChain);
-    			
-    			LOGGER.info("Status: CHAIN Received");
    
     			
         	}
