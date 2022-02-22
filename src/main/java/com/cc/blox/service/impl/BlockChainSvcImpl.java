@@ -120,11 +120,6 @@ public class BlockChainSvcImpl implements BlockChainSvc {
 		return blockChain.chain;
 	}
 	
-	@Override
-	public void syncNode() {
-		
-	}
-	
 	
 	@EventListener(ApplicationReadyEvent.class)
 	@Override

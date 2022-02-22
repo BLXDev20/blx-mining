@@ -51,7 +51,7 @@ public class BlockChainListener {
             	
             	if(!localBlockChain.get(localBlockChain.size()-1).hash.equals(block.lastHash)) {
             	
-            		blockChainSvc.syncNode();
+            		blockChainSvc.syncChains();
             	} else {
             		localBlockChain.add(block);
                 	
